@@ -1,0 +1,136 @@
+## prerequisite 
+
+ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
+brew doctor
+brew update
+
+## Optional Dependencies
+
+sudo easy_install sphinx
+sudo easy_install sphinxcontrib-fulltoc
+
+## brew install poppler
+
+rew install hadoop
+sudo chmod -R a+w /usr/local/{include,lib,etc}
+
+## configure hadoop
+
+/usr/local/Cellar/hadoop/2.2.0/libexec/etc/hadoop/.
+
+## Modify core-site.xml
+
+<configuration>
+        <property>
+                <name>fs.default.name</name>
+                <value>hdfs://localhost:8020</value>
+        </property>
+</configuration>
+
+
+## Modify mapred-site.xml
+
+<configuration>
+        <property>
+                <name>mapred.job.tracker</name>
+                <value>localhost:9001</value>
+        </property>
+        <property>
+                <name>mapred.tasktracker.map.tasks.maximum</name>
+                <value>5</value>
+        </property>
+</configuration>
+
+
+## Modify hdfs-site.xml
+
+<configuration>
+        <property>
+                <name>dfs.replication</name>
+                <value>1</value>
+        </property>
+</configuration>
+
+## Optional: Enable password-less SSH from localhost to localhost for convenience.
+
+# First enable remote login in the system sharing control panel, and then:
+
+brew install ssh-copy-id
+ssh-keygen
+ssh-copy-id -i ~/.ssh/id_rsa.pub localhost
+
+## Start Hadoop MapReduce services
+
+/usr/local/Cellar/hadoop/1.2.1/bin/start-all.sh
+
+or 
+
+/usr/local/Cellar/hadoop/2.2.0/sbin/start-dfs.sh
+/usr/local/Cellar/hadoop/2.2.0/sbin/start-yarn.sh
+
+## Verify that Hadoop 
+
+jps
+
+            81829 JobTracker
+            81556 NameNode
+            81756 SecondaryNameNode
+            9382 Jps
+            81655 DataNode
+            81928 TaskTracker
+            
+## Format HDFS and leave the safe mode.
+
+hadoop namenode -format
+hadoop dfsadmin -safemode leave
+
+## Launching H2O on Hadoop
+
+hadoop jar target/hadoop/h2odriver_cdh4.jar water.hadoop.h2odriver \
+                                 -libjars target/h2o.jar -mapperXmx 1g -nodes 5 -output out
+                                 
+## Point your web browser to the HTTP URL http://localhost:54321; H2O will run from there.
+
+## Optional: Delete the output file after shutting down H2O
+
+hadoop fs -rmr out
+
+
+            
+            
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
